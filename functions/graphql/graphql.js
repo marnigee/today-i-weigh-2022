@@ -5,15 +5,35 @@ const { ApolloServer, gql } = require('apollo-server-lambda');
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
   type Query {
-    hello: String
+    weights: [Weight]!
+  }
+  type Weight {
+    id: ID!
+    date: String!
+    weight: Float!
+  }
+  type Mutation {
+    addWeight(date: String!, weight: Float!): Weight
   }
 `;
 
+const weights = {};
+let weightIndex = 0;
 // Provide resolver functions for your schema fields
 const resolvers = {
   Query: {
-    hello: () => 'Hello world!',
+    weights: () => {
+      return Object.values(weights)
+    },
   },
+  Mutation: {
+    addWeight: (_, { date, weight }) => {
+      weightIndex++;
+      const id = `key-${weightIndex}`;
+      weights[id] = { id, date, weight }
+      return weights[id];
+    }
+  }
 };
 
 const server = new ApolloServer({
