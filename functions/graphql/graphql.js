@@ -29,4 +29,15 @@ const server = new ApolloServer({
   introspection: true
 });
 
-exports.handler = server.createHandler();
+const apolloHandler = server.createHandler();
+
+exports.handler = async (event, context, ...args) => {
+  return apolloHandler(
+    {
+      ...event,
+      requestContext: context,
+    },
+    context,
+    ...args
+  );
+};
