@@ -5,6 +5,7 @@ import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
+import { useQuery } from '@apollo/client';
 
 const { format } = require('date-fns');
 
@@ -19,6 +20,19 @@ function App() {
     'Saturday',
     'Sunday'
   ];
+
+const GET_WEIGHTS = gql`
+  query GetWeights {
+    weights {
+      id
+      date
+      weight
+    }
+  }
+`;
+
+  const { loading, error, data } = useQuery(GET_WEIGHTS);
+  console.log('data: ', data);
 
   // Function using fetch to POST to our API endpoint
   async function createWeighIn(data) {

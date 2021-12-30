@@ -49,7 +49,12 @@ const server = new ApolloServer({
   introspection: true
 });
 
-const apolloHandler = server.createHandler();
+const apolloHandler = server.createHandler({
+  cors: {
+    origin: '*',
+    credentials: true
+  }
+});
 
 exports.handler = async (event, context, ...args) => {
   return apolloHandler(

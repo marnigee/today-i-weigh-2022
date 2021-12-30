@@ -2,10 +2,26 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  HttpLink
+} from '@apollo/client';
 // import reportWebVitals from './reportWebVitals';
+
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: new HttpLink({
+    uri: 'https://today-i-weigh.netlify.app/.netlify/functions/graphql'
+  })
+});
+
 
 ReactDOM.render(
   <React.StrictMode>
+    <ApolloProvider client={client}>
+      </ApolloProvider>
     <App />
   </React.StrictMode>,
   document.getElementById('root')
