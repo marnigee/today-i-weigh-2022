@@ -6,6 +6,7 @@ import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useQuery, gql } from '@apollo/client';
+import Identity from './Identity';
 
 const { format } = require('date-fns');
 
@@ -72,6 +73,7 @@ const GET_WEIGHTS = gql`
       <header className="App-header">
         <h1>Today I Weigh</h1>
       </header>
+      <Identity />
       <form>
         <TextField
           id="date"
