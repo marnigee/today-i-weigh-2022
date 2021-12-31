@@ -14,13 +14,20 @@ async function run() {
 	const results = await client.query(
 		q.Create(q.Collection('weights'), {
 			data: {
-				weight: 132,
-				date: '10102022',
-				owner: 'user-test'
+				weight: 100,
+				date: '10112022',
+				owner: 'user-test2'
 			}
 		})
 	);
-	console.log(results);
+	// const results = await client.query(
+	// 	q.Update(q.Ref(q.Collection('weights'), '319513428276281408'), {
+	// 		data: {
+	// 			weight: 122,
+	// 		}
+	// 	})
+	// )
+	console.log('results: ', results);
 }
 
 run();

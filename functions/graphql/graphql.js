@@ -1,6 +1,13 @@
 // graphql.js
 
 const { ApolloServer, gql } = require('apollo-server-lambda');
+const faunadb = require('faunadb');
+const q = faunadb.query;
+
+var client = new faunadb.Client({
+	secret: process.env.FAUNA_DB_SECRET,
+	domain: 'db.us.fauna.com'
+});
 
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
@@ -17,21 +24,50 @@ const typeDefs = gql`
   }
 `;
 
-const weights = {};
-let weightIndex = 0;
 // Provide resolver functions for your schema fields
 const resolvers = {
   Query: {
-    weights: () => {
-      return Object.values(weights)
+    weights: async (parent, args, { user }) => {
+      if (!user) {
+        return [];
+      }
+      else {
+        const results = await client.query(
+          q.Paginate(
+            q.Match(
+              q.Index('weights_by_user'), user
+            )
+          )
+        )
+        return results.data.map(([ref, weight, date]) => ({
+          id: ref.id,
+          weight,
+          date
+        }))
+      }
     },
   },
   Mutation: {
-    addWeight: (_, { date, weight }) => {
-      weightIndex++;
-      const id = `key-${weightIndex}`;
-      weights[id] = { id, date, weight }
-      return weights[id];
+    addWeight: async (_, { date, weight }, { user }) => {
+      if (!user) {
+        throw new Error('Must be authenticated to add weights');
+      }
+      const results = await client.query(
+        q.Create(
+          q.Collections('weights'),
+          {
+            data: {
+              weight,
+              date,
+              owner: user
+            }
+          }
+        )
+      );
+      return {
+        ...results.data,
+        id: results.ref.id
+      }
     }
   }
 };
