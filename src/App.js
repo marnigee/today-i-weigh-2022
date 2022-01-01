@@ -9,7 +9,6 @@ import { useQuery, gql } from '@apollo/client';
 
 const { format } = require('date-fns');
 
-
 function App() {
   const days = [
     'Monday',

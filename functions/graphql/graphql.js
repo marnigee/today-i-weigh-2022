@@ -28,14 +28,14 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     weights: async (parent, args, { user }) => {
-      if (!user) {
-        return [];
-      }
-      else {
+      // if (!user) {
+      //   return [];
+      // }
+      // else {
         const results = await client.query(
           q.Paginate(
             q.Match(
-              q.Index('weights_by_user'), user
+              q.Index('weights_by_user'), 'user-test'
             )
           )
         )
@@ -44,30 +44,27 @@ const resolvers = {
           weight,
           date
         }))
-      }
+      // }
     },
   },
   Mutation: {
     addWeight: async (_, { date, weight }, { user }) => {
-      if (!user) {
-        throw new Error('Must be authenticated to add weights');
-      }
+      // if (!user) {
+      //   throw new Error("Must be authenticated to insert todos");
+      // }
       const results = await client.query(
-        q.Create(
-          q.Collections('weights'),
-          {
-            data: {
-              weight,
-              date,
-              owner: user
-            }
+        q.Create(q.Collection("weights"), {
+          data: {
+            weight,
+            date,
+            owner: "user-test"
           }
-        )
+        })
       );
       return {
         ...results.data,
         id: results.ref.id
-      }
+      };
     }
   }
 };
